@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply antialiased bg-[#0f172a] text-slate-300;
+    }
+}
+
+.code-block {
+    @apply bg-[#1e1e1e] border border-white/10 rounded-xl p-6 font-mono text-sm leading-relaxed shadow-xl;
+}
+
+.lesson-card {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 hover:border-python/50 transition-all duration-300;
+}
