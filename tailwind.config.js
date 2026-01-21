@@ -7,8 +7,8 @@ export default {
     theme: {
         extend: {
             colors: {
-                python: "#3776ab",
-                dark: "#1e1e1e",
+                python: "#2563eb",
+                dark: "#020617",
             },
         },
     },
