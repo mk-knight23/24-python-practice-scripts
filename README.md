@@ -20,16 +20,23 @@
 ```bash
 # Interactive Showcase
 npm install
-npm run dev
-
-# Python Scripts
-# python src/example_script.py
-```
-
 ## Documentation
-Additional technical details can be found in the [docs/](docs/) directory.
+- [Architecture Overview](docs/ARCHITECTURE.md)
+- [Design System](docs/DESIGN.md)
+- [Deployment Guide](docs/DEPLOY.md)
 
 ## Live Deployment
-GitHub Pages: [https://mk-knight23.github.io/24-python-practice-scripts/](https://mk-knight23.github.io/24-python-practice-scripts/)
-Status: 🟢 Live
-Last Updated: 2026-01-21
+- **GitHub Pages**: [https://mk-knight23.github.io/24-python-practice-scripts/](https://mk-knight23.github.io/24-python-practice-scripts/)
+- **Status**: 🟢 Live
+- **Modernized**: 2026-01-23
+
+---
+*Maintained by [Kazi Musharraf](https://github.com/mk-knight23)*
+
+## 🌐 Live Deployments
+
+- Vercel: https://24-python-practice-scripts.vercel.app
+- GitHub Pages: https://mk-knight23.github.io/24-python-practice-scripts/
+
+Status: 🟢 Deployments Live  
+Last Updated: 2026-01-23

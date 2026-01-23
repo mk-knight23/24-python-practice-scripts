@@ -202,7 +202,7 @@ export default function App() {
 
             {/* Footer (Mobile Friendly) */}
             <footer className="lg:ml-80 border-t border-white/5 p-8 text-center">
-                <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.4em]">© 2024 MK_PYLEARN_ACADEMY • 24/30 DEPLOYED</p>
+                <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.4em]">© 2026 PYLEARN // ACADEMY • 24/30 DISPATCHED</p>
             </footer>
         </div>
     );
