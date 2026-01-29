@@ -1,21 +1,30 @@
-node_modules/
-.next/
-.vercel/
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
 dist/
 build/
-coverage/
-*.log
-.env*
-package-lock.json
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
 .DS_Store
 Thumbs.db
-.Trash
-__pycache__/
-.venv/
-env/
-venv/
-*.pyc
-.pytest_cache/
-.mypy_cache/
-.vercel
-.env*.local
+
+# Temporary files created by exercises
+*.txt
+output.txt
+sample_data.txt
+temp_file.txt
