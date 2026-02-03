@@ -4,9 +4,12 @@ Terminal utilities for the Python practice CLI.
 No dependencies outside stdlib. Keep it simple.
 """
 
+from __future__ import annotations
+
 import os
 import shutil
-from typing import List, Tuple
+import subprocess
+from typing import List, Tuple, Dict, Optional
 
 
 # Colors? No. Just ANSI grayscale.
@@ -26,7 +29,7 @@ ANSI = {
 def term_width() -> int:
     """Get terminal width, fallback to 80."""
     try:
-        return shutil.get_terminal_size().columns
+        return shutil.get_terminal_size((80, 24)).columns
     except Exception:
         return 80
 
@@ -100,8 +103,12 @@ def menu(options: List[Tuple[str, str]], title: str = None) -> str:
     return '\n'.join(result)
 
 
-def prompt(text: str = ">>> ") -> str:
-    """Show a prompt and get input."""
+def prompt(text: str = ">>> ") -> Optional[str]:
+    """Show a prompt and get input.
+
+    Returns:
+        User input string, or None if interrupted.
+    """
     try:
         return input(f"{text}")
     except (EOFError, KeyboardInterrupt):
@@ -171,15 +178,19 @@ def list_exercises(skills_dir: str = "skills") -> List[Tuple[str, str, str]]:
     return exercises
 
 
-def read_exercise_info(filepath: str) -> dict:
+def read_exercise_info(filepath: str) -> Dict[str, any]:
     """
     Extract metadata from a Python exercise file.
+
     Looks for:
     - Purpose: in comments
     - Input/Output: examples
     - Why: explanation
+
+    Returns:
+        Dictionary with keys: purpose, examples, why, code
     """
-    info_dict = {
+    info_dict: Dict[str, any] = {
         'purpose': 'No description available.',
         'examples': [],
         'why': '',

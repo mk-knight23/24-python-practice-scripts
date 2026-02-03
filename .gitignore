@@ -12,6 +12,16 @@ build/
 venv/
 env/
 ENV/
+.venv/
+
+# Testing and type checking
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Progress tracking (user-specific)
+.progress.json
 
 # IDE
 .vscode/
@@ -28,3 +38,4 @@ Thumbs.db
 output.txt
 sample_data.txt
 temp_file.txt
+.vercel

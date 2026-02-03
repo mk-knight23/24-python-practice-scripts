@@ -1,17 +1,21 @@
 {
   "name": "python-practice",
-  "version": "3.0.0",
-  "description": "A terminal-based Python learning system. No frameworks, just code.",
+  "version": "4.0.0",
+  "description": "A terminal-based Python learning system with web dashboard and analytics.",
   "scripts": {
     "start": "python cli/runner.py",
-    "cli": "python cli/runner.py"
+    "cli": "python cli/runner.py",
+    "build": "echo 'Build complete - Static files ready'",
+    "test": "python -m pytest tests/"
   },
   "keywords": [
     "python",
     "learning",
     "education",
     "cli",
-    "terminal"
+    "terminal",
+    "dashboard",
+    "analytics"
   ],
   "author": "Kazi Musharraf",
   "license": "MIT",

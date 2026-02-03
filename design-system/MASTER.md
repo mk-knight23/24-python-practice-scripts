@@ -1,171 +1,172 @@
-# Design System: Python Practice Terminal
+# Python Practice Dashboard — Design Master v3.0
 
-> For humans. By a human who was tired of flashy tutorials.
+> Glassmorphism Edition: Modern, bright, and confident UI for Python learning tracking
 
 ---
 
-## Color Palette
+## Philosophy
 
-The terminal doesn't need colors. It needs clarity.
+This dashboard exists to make Python practice tangible and rewarding. Seeing progress visually keeps learners motivated. Every chart shows growth. Every achievement celebrates mastery.
 
-| Token | Hex | Usage |
-|-------|-----|-------|
-| `bg-primary` | `#000000` | Background, terminal surface |
-| `bg-secondary` | `#333333` | Input areas, code blocks |
-| `text-primary` | `#FFFFFF` | Main text, prompts |
-| `text-secondary` | `#CCCCCC` | Secondary info, timestamps |
-| `text-muted` | `#999999` | Hints, disabled states |
-| `border` | `#666666` | Dividers, box outlines |
+**Core belief**: Practice should feel rewarding, not routine.
 
-**No other colors. Ever.**
+**v3.0 Update**: Adopted glassmorphism design with vibrant indigo/cyan palette for enhanced visual clarity and modern aesthetics.
+
+---
+
+## Color Palette (Glassmorphism Indigo Theme)
+
+### Primary Colors
+
+```
+--cad-primary:      #4F46E5   /* Vibrant indigo - primary actions */
+--cad-primary-dark:  #4338CA   /* Hover states */
+--cad-primary-light: #6366F1   /* Focus rings, accents */
+```
+
+### Secondary & Accent Colors
+
+```
+--cad-secondary: #818CF8   /* Cyan for highlights */
+--cad-cta:       #22C55E   /* Vibrant green for completion */
+```
+
+### Neutral Colors (Light Blue-White Tinted Grayscale)
+
+```
+--cad-gray-50:  #EEF2FF   /* Main background (light blue-white) */
+--cad-gray-100: #E0E7FF   /* Hover backgrounds */
+--cad-gray-200: #C7D2FE   /* Borders, dividers */
+--cad-gray-300: #A5B4FC   /* Disabled states */
+--cad-gray-400: #818CF8   /* Secondary text */
+--cad-gray-500: #6366F1   /* Placeholder text */
+--cad-gray-600: #4F46E5   /* Body text (primary) */
+--cad-gray-700: #312E81   /* Headings (deep indigo) */
+--cad-gray-800: #1E1B4B   /* Dark backgrounds */
+--cad-gray-900: #0F172A   /* Deepest backgrounds */
+```
+
+### Semantic Colors
+
+| Purpose | Color | Hex | Usage |
+|---------|-------|-----|-------|
+| Accent/Primary | Indigo | `#4F46E5` | Links, buttons, highlights |
+| Success | Green | `#22C55E` | Correct answers, completion |
+| Warning | Orange | `#F59E0B` | Hints, gentle warnings |
+| Error | Red | `#EF4444` | Errors, incorrect paths |
 
 ---
 
 ## Typography
 
-**Primary:** JetBrains Mono, Courier New, monospace
+### Font Stack
 
-**Scale:**
-```
-header:     1.5rem  (24px) - ASCII art, main titles
-body:       1rem    (16px) - Exercise content, descriptions
-small:      0.875rem (14px) - Metadata, file paths
-mono:       0.9rem  - Code blocks, terminal output
+```css
+--font-sans: 'Fira Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+--font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 ```
 
-**Line height:** 1.6 for reading, 1.2 for code
+### Type Scale
+
+| Level | Size | Weight | Line Height | Usage |
+|-------|------|--------|-------------|-------|
+| Hero | 3rem (48px) | 800 | 1.1 | Page titles |
+| H1 | 2rem (32px) | 700 | 1.2 | Section headers |
+| H2 | 1.5rem (24px) | 600 | 1.3 | Card titles |
+| Body | 1rem (16px) | 400 | 1.6 | Paragraphs |
+| Small | 0.875rem (14px) | 400 | 1.5 | Descriptions |
 
 ---
 
-## Layout Rules
+## Glassmorphism Effects
 
-### Terminal Blocks
+### Glass Card Style
 
-Every "card" or section uses ASCII-inspired borders:
+```css
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-```
-+------------------+
-|  HEADER TEXT     |
-+------------------+
-|                  |
-|  Content here    |
-|                  |
-+------------------+
-```
-
-Or the simpler variant (preferred for inline):
-
-```
---- section name ---
-content here
--------------------
+.glass-card:hover {
+  box-shadow: 0 8px 12px -2px rgba(79, 70, 229, 0.15);
+  transform: translateY(-2px);
+}
 ```
 
-### Spacing
+### Glass Navigation
 
-- Never use exact pixel values in comments
-- "One blank line" = visual breath
-- "Two blank lines" = section break
-- Inconsistent spacing is *okay* - feels hand-written
-
----
-
-## Components
-
-### Code Blocks
-
-```python
-# Like this. Plain.
-# No syntax highlighting colors, just the code.
-def example():
-    return "clarity"
-```
-
-### Exercise Cards
-
-```
-[01] exercise_name.py
-     Purpose: One line description
-     Why: Why this matters
-```
-
-### CLI Output
-
-```
-$ command
-output line 1
-output line 2
->> prompt
+```css
+.glass-nav {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(79, 70, 229, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.08);
+}
 ```
 
 ---
 
-## The Intentional Quirk
+## Component Patterns
 
-**The "Breathing Cursor"**
-
-Every prompt ends with a blinking cursor represented by `█` or `▌` depending on mood. Not because it's functional, but because it reminds you: you're in a conversation with the machine.
-
-In HTML: use a CSS animation that blinks once every 1.2s (not 1s - too predictable)
-In CLI: a static `>` or `>>` prompt (no blinking, save the CPU)
-
----
-
-## The Tradeoff
-
-**Accepted: No syntax highlighting**
-
-Color-coded keywords make code feel "finished." This system uses plain text to make code feel editable. You're looking at the raw material, not the product.
-
-**Benefit gained:** Uniform aesthetic, focus on structure over decoration.
-
----
-
-## The Limitation
-
-**No images, no icons**
-
-If you can't draw it with ASCII or type it with a keyboard, it doesn't exist here. This keeps the system honest - everything must be expressible in code.
-
----
-
-## File Naming
+### Stats Card
 
 ```
-001_hello.py          # Basics: numbered
-file_handler.py       # Core: descriptive
-class_patterns.py     # Advanced: conceptual
+┌────────────────────────────────────┐
+│  Exercises Completed               │
+│  24                                │
+│  of 32 total                       │
+└────────────────────────────────────┘
 ```
 
-Underscores only. No hyphens (harder to type in import statements).
+**Style**: Glass card with white/70% opacity, subtle indigo shadows
+
+### Progress Bar
+
+```
+████████░░░░░░░░ 75%
+```
+
+**Style**: Indigo background (#E0E7FF) with green progress (#22C55E)
 
 ---
 
-## Comments Style
+## Responsive Behavior
 
-```python
-# Good: explains *why*, not *what*
-# Bad:  x = x + 1  # increment x
+### Breakpoints
 
-# Good: human uncertainty
-#       not sure if this handles edge cases
-
-# Good: conversational
-#       let's try a simpler approach here
-```
+| Name | Width | Behavior |
+|------|-------|----------|
+| Mobile | < 768px | Single column, stacked cards |
+| Desktop | > 768px | 3-column grid for stats |
 
 ---
 
-## Terminal Prompts
+## Accessibility
 
-Always show the `$` or `>>` to indicate "this is runnable" vs "this is output."
+### Minimum Requirements
 
-```
-$ python script.py    # command you type
-Hello, World          # output you see
->> Next?              # system prompt
-```
+- **Color Contrast**: 4.5:1 for normal text (WCAG AA)
+- **Focus Indicators**: 2px solid offset outline with indigo color
+- **Touch Targets**: Minimum 44x44px for interactive elements
+- **Reduced Motion**: Disable animations when `prefers-reduced-motion` is set
 
 ---
 
-*Last updated: by hand, when it needed updating.*
+## Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 3.0 | 2026-02-04 | Glassmorphism redesign with vibrant indigo theme |
+| 2.0 | 2026-01-29 | Added quiz and achievements |
+| 1.0 | 2025-12-20 | Initial dashboard design |
+
+---
+
+*Updated using UI-UX Pro Max System v2.0*

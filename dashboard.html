@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Practice Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+        body { font-family: 'Fira Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        .dark { color-scheme: dark; }
+        .light { color-scheme: light; }
+    
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(79, 70, 229, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.08);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            box-shadow: 0 8px 12px -2px rgba(79, 70, 229, 0.15);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="min-h-screen" style="background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%); color: #312E81;">
+    <div id="app" class="flex flex-col h-screen">
+        <!-- Header -->
+        <header class="px-6 py-4 glass-nav">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">Python Practice Dashboard</h1>
+                    <p class="text-gray-400 text-sm mt-1">Track your learning journey</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div id="user-info" class="text-sm text-gray-400"></div>
+                    <button onclick="toggleTheme()" class="px-3 py-1 rounded hover:bg-indigo-100 text-sm transition-colors cursor-pointer">
+                        Toggle Theme
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="px-6 glass-nav">
+            <div class="max-w-7xl mx-auto flex gap-1">
+                <button onclick="showTab('dashboard')" class="tab-btn px-4 py-3 text-sm font-medium hover:bg-indigo-50 border-b-2 border-transparent transition-colors" data-tab="dashboard">
+                    Dashboard
+                </button>
+                <button onclick="showTab('exercises')" class="tab-btn px-4 py-3 text-sm font-medium hover:bg-gray-700 border-b-2 border-transparent" data-tab="exercises">
+                    Exercises
+                </button>
+                <button onclick="showTab('quiz')" class="tab-btn px-4 py-3 text-sm font-medium hover:bg-gray-700 border-b-2 border-transparent" data-tab="quiz">
+                    Quiz
+                </button>
+                <button onclick="showTab('achievements')" class="tab-btn px-4 py-3 text-sm font-medium hover:bg-gray-700 border-b-2 border-transparent" data-tab="achievements">
+                    Achievements
+                </button>
+                <button onclick="showTab('analytics')" class="tab-btn px-4 py-3 text-sm font-medium hover:bg-gray-700 border-b-2 border-transparent" data-tab="analytics">
+                    Analytics
+                </button>
+                <button onclick="showTab('settings')" class="tab-btn px-4 py-3 text-sm font-medium hover:bg-gray-700 border-b-2 border-transparent" data-tab="settings">
+                    Settings
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-auto p-6">
+            <div class="max-w-7xl mx-auto">
+
+                <!-- Dashboard Tab -->
+                <div id="tab-dashboard" class="tab-content">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <!-- Stats Cards -->
+                        <div class="glass-card p-6">
+                            <div class="text-gray-400 text-sm mb-2">Exercises Completed</div>
+                            <div id="stat-completed" class="text-4xl font-bold text-green-400">0</div>
+                            <div id="stat-total" class="text-gray-500 text-sm mt-1">of 0 total</div>
+                        </div>
+                        <div class="glass-card p-6">
+                            <div class="text-gray-400 text-sm mb-2">Time Spent</div>
+                            <div id="stat-time" class="text-4xl font-bold text-blue-400">0h</div>
+                            <div class="text-gray-500 text-sm mt-1">Learning time</div>
+                        </div>
+                        <div class="glass-card p-6">
+                            <div class="text-gray-400 text-sm mb-2">Achievements</div>
+                            <div id="stat-achievements" class="text-4xl font-bold text-yellow-400">0</div>
+                            <div class="text-gray-500 text-sm mt-1">Badges earned</div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-8">
+                        <h2 class="text-lg font-semibold mb-4">Overall Progress</h2>
+                        <div class="w-full bg-indigo-100 rounded-full h-4">
+                            <div id="progress-bar" class="bg-green-500 h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <div id="progress-text" class="text-center text-gray-400 mt-2">0%</div>
+                    </div>
+
+                    <!-- Category Progress -->
+                    <div class="glass-card p-6">
+                        <h2 class="text-lg font-semibold mb-4">Progress by Category</h2>
+                        <div id="category-progress" class="space-y-4"></div>
+                    </div>
+                </div>
+
+                <!-- Exercises Tab -->
+                <div id="tab-exercises" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-semibold">Exercise Browser</h2>
+                        <select id="category-filter" onchange="filterExercises()" class="bg-gray-700 border border-gray-600 rounded px-3 py-2 text-sm">
+                            <option value="all">All Categories</option>
+                            <option value="basics">Basics</option>
+                            <option value="core">Core</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div id="exercise-list" class="grid gap-4"></div>
+                </div>
+
+                <!-- Quiz Tab -->
+                <div id="tab-quiz" class="tab-content hidden">
+                    <div id="quiz-menu">
+                        <h2 class="text-xl font-semibold mb-6">Quiz Mode</h2>
+                        <div class="grid gap-4">
+                            <button onclick="startQuiz('basics')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg p-6 text-left">
+                                <h3 class="font-semibold text-lg mb-2">Basics Quiz</h3>
+                                <p class="text-gray-400 text-sm">Variables, types, loops, conditionals</p>
+                            </button>
+                            <button onclick="startQuiz('core')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg p-6 text-left">
+                                <h3 class="font-semibold text-lg mb-2">Core Quiz</h3>
+                                <p class="text-gray-400 text-sm">Functions, files, error handling</p>
+                            </button>
+                            <button onclick="startQuiz('advanced')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg p-6 text-left">
+                                <h3 class="font-semibold text-lg mb-2">Advanced Quiz</h3>
+                                <p class="text-gray-400 text-sm">OOP, decorators, generators</p>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="quiz-active" class="hidden">
+                        <div class="glass-card p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <span id="quiz-progress" class="text-gray-400">Question 1/5</span>
+                                <span id="quiz-timer" class="text-gray-400">0:00</span>
+                            </div>
+                            <h3 id="quiz-question" class="text-lg mb-6"></h3>
+                            <div id="quiz-options" class="space-y-3"></div>
+                            <button onclick="submitAnswer()" class="mt-6 w-full bg-blue-600 hover:bg-blue-700 rounded px-4 py-2">
+                                Submit Answer
+                            </button>
+                        </div>
+                    </div>
+                    <div id="quiz-results" class="hidden">
+                        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 text-center">
+                            <h2 class="text-2xl font-bold mb-4">Quiz Complete!</h2>
+                            <div id="quiz-score" class="text-5xl font-bold text-green-400 mb-4"></div>
+                            <p id="quiz-message" class="text-gray-400 mb-6"></p>
+                            <button onclick="showTab('quiz'); resetQuiz();" class="bg-blue-600 hover:bg-blue-700 rounded px-6 py-2">
+                                Take Another Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievements Tab -->
+                <div id="tab-achievements" class="tab-content hidden">
+                    <h2 class="text-xl font-semibold mb-6">Achievements</h2>
+                    <div id="achievements-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div id="tab-analytics" class="tab-content hidden">
+                    <h2 class="text-xl font-semibold mb-6">Analytics</h2>
+
+                    <!-- Time Chart -->
+                    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-6">
+                        <h3 class="font-semibold mb-4">Learning Time (Last 7 Days)</h3>
+                        <canvas id="time-chart" height="200"></canvas>
+                    </div>
+
+                    <!-- Category Chart -->
+                    <div class="glass-card p-6">
+                        <h3 class="font-semibold mb-4">Exercises by Category</h3>
+                        <canvas id="category-chart" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="tab-settings" class="tab-content hidden">
+                    <h2 class="text-xl font-semibold mb-6">Settings</h2>
+
+                    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700 space-y-6">
+                        <!-- Difficulty -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Difficulty Level</label>
+                            <select id="setting-difficulty" onchange="saveSetting('difficulty', this.value)" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2">
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+
+                        <!-- Daily Goal -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Daily Goal (minutes)</label>
+                            <input type="number" id="setting-goal" onchange="saveSetting('dailyGoal', this.value)" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2" min="5" max="240">
+                        </div>
+
+                        <!-- Show Hints -->
+                        <div class="flex items-center justify-between">
+                            <span class="font-medium">Show Hints</span>
+                            <button onclick="toggleSetting('showHints')" id="toggle-hints" class="px-4 py-2 bg-gray-700 rounded hover:bg-gray-600">
+                                Off
+                            </button>
+                        </div>
+
+                        <!-- Export Data -->
+                        <div class="pt-4 border-t border-gray-700">
+                            <button onclick="exportData()" class="w-full bg-blue-600 hover:bg-blue-700 rounded px-4 py-2">
+                                Export Data (JSON)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ============ DATA STORE ============
+        const EXERCISES = [
+            { category: 'basics', file: '001_hello.py', title: 'Hello World', purpose: 'Your first Python program' },
+            { category: 'basics', file: '002_variables.py', title: 'Variables', purpose: 'Storing and using data' },
+            { category: 'basics', file: '003_input.py', title: 'User Input', purpose: 'Getting input from users' },
+            { category: 'basics', file: '004_conditionals.py', title: 'Conditionals', purpose: 'Making decisions with if/else' },
+            { category: 'basics', file: '005_loops.py', title: 'Loops', purpose: 'Repeating code with for/while' },
+            { category: 'basics', file: '006_lists.py', title: 'Lists', purpose: 'Collections of items' },
+            { category: 'core', file: '001_functions.py', title: 'Functions', purpose: 'Reusable code blocks' },
+            { category: 'core', file: '002_file_read.py', title: 'File Reading', purpose: 'Reading from files' },
+            { category: 'core', file: '003_file_write.py', title: 'File Writing', purpose: 'Writing to files' },
+            { category: 'core', file: '004_error_handling.py', title: 'Error Handling', purpose: 'Try/except blocks' },
+            { category: 'core', file: '005_dictionaries.py', title: 'Dictionaries', purpose: 'Key-value pairs' },
+            { category: 'advanced', file: '001_classes.py', title: 'Classes', purpose: 'Object-oriented programming' },
+            { category: 'advanced', file: '002_inheritance.py', title: 'Inheritance', purpose: 'Class relationships' },
+            { category: 'advanced', file: '003_decorators.py', title: 'Decorators', purpose: 'Function modifiers' },
+            { category: 'advanced', file: '004_generators.py', title: 'Generators', purpose: 'Lazy evaluation' }
+        ];
+
+        const QUIZ_QUESTIONS = {
+            basics: [
+                { q: 'What is the correct way to create a variable in Python?', options: ['var x = 5', 'x = 5', 'int x = 5', 'let x = 5'], correct: 1 },
+                { q: 'Which of these is a valid Python comment?', options: ['// comment', '# comment', '/* comment */', '<!-- comment -->'], correct: 1 },
+                { q: 'What does len() do?', options: ['Calculates length', 'Creates list', 'Converts case', 'Loops items'], correct: 0 },
+                { q: 'How do you write an if statement?', options: ['if x == 5:', 'if (x == 5) {', 'if x == 5 then', 'if [x == 5]'], correct: 0 },
+                { q: 'What is 3 ** 2?', options: ['6', '5', '9', '32'], correct: 2 }
+            ],
+            core: [
+                { q: 'How do you define a function?', options: ['function myFunc():', 'def myFunc():', 'func myFunc():', 'define myFunc():'], correct: 1 },
+                { q: 'How do you open a file for reading?', options: ['open("file.txt", "r")', 'read("file.txt")', 'fopen("file.txt")', 'load("file.txt")'], correct: 0 },
+                { q: 'What is a context manager?', options: ['Speed optimization', 'Auto cleanup', 'Variable creator', 'Error handler'], correct: 1 },
+                { q: 'How do you handle exceptions?', options: ['try/catch', 'try/except', 'try/error', 'do/catch'], correct: 1 },
+                { q: 'What is a dictionary?', options: ['Reference book', 'Key-value pairs', 'Sorted list', 'Text file'], correct: 1 }
+            ],
+            advanced: [
+                { q: 'How do you define a class?', options: ['class MyClass:', 'def MyClass:', 'object MyClass:', 'struct MyClass:'], correct: 0 },
+                { q: 'What is __init__?', options: ['Destructor', 'Constructor', 'Static method', 'Class variable'], correct: 1 },
+                { q: 'What is inheritance?', options: ['Code copying', 'Creating from existing', 'Importing', 'Globals'], correct: 1 },
+                { q: 'What is a decorator?', options: ['Color scheme', 'Function modifier', 'Class method', 'Variable type'], correct: 1 },
+                { q: 'What does yield do?', options: ['Returns and ends', 'Pauses and returns', 'Creates var', 'Imports module'], correct: 1 }
+            ]
+        };
+
+        const ACHIEVEMENTS = [
+            { id: 'first_exercise', title: 'Hello World', desc: 'Complete your first exercise', icon: '👋' },
+            { id: 'five_exercises', title: 'Getting Started', desc: 'Complete 5 exercises', icon: '📝' },
+            { id: 'ten_exercises', title: 'Dedicated Learner', desc: 'Complete 10 exercises', icon: '🎯' },
+            { id: 'basics_master', title: 'Basics Master', desc: 'Complete all basics', icon: '🎓' },
+            { id: 'core_master', title: 'Core Master', desc: 'Complete all core', icon: '🔧' },
+            { id: 'advanced_master', title: 'Advanced Master', desc: 'Complete all advanced', icon: '🧠' },
+            { id: 'perfect_quiz', title: 'Perfect Score', desc: 'Get 100% on a quiz', icon: '💯' },
+            { id: 'quiz_master', title: 'Quiz Master', desc: 'Score 80%+ on a quiz', icon: '🧩' }
+        ];
+
+        // ============ STATE ============
+        let state = {
+            theme: 'dark',
+            user: {
+                name: 'Guest',
+                progress: {},
+                completed: [],
+                quizScores: [],
+                achievements: [],
+                settings: {
+                    difficulty: 'intermediate',
+                    dailyGoal: 30,
+                    showHints: true
+                }
+            }
+        };
+
+        let quizState = {
+            active: false,
+            category: null,
+            questions: [],
+            current: 0,
+            correct: 0,
+            startTime: null,
+            timer: null
+        };
+
+        let charts = { time: null, category: null };
+
+        // ============ INITIALIZATION ============
+        function init() {
+            loadState();
+            showTab('dashboard');
+            updateDashboard();
+            initCharts();
+            renderExerciseList();
+            renderAchievements();
+            loadSettings();
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('pythonPracticeState');
+            if (saved) {
+                state = JSON.parse(saved);
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('pythonPracticeState', JSON.stringify(state));
+        }
+
+        // ============ TABS ============
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('border-blue-500', 'text-blue-400');
+                el.classList.add('border-transparent');
+            });
+
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('border-blue-500', 'text-blue-400');
+            document.querySelector(`[data-tab="${tabName}"]`).classList.remove('border-transparent');
+
+            if (tabName === 'analytics') {
+                updateCharts();
+            }
+        }
+
+        // ============ DASHBOARD ============
+        function updateDashboard() {
+            const completed = state.user.completed.length;
+            const total = EXERCISES.length;
+            const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+            document.getElementById('stat-completed').textContent = completed;
+            document.getElementById('stat-total').textContent = `of ${total} total`;
+            document.getElementById('stat-time').textContent = estimateTime(completed);
+            document.getElementById('stat-achievements').textContent = state.user.achievements.length;
+
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+            document.getElementById('progress-text').textContent = `${percent}%`;
+
+            // Category progress
+            const categories = ['basics', 'core', 'advanced'];
+            const container = document.getElementById('category-progress');
+            container.innerHTML = categories.map(cat => {
+                const catTotal = EXERCISES.filter(e => e.category === cat).length;
+                const catCompleted = state.user.completed.filter(e => e.category === cat).length;
+                const catPercent = catTotal > 0 ? Math.round((catCompleted / catTotal) * 100) : 0;
+                return `
+                    <div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="capitalize">${cat}</span>
+                            <span class="text-gray-400">${catCompleted}/${catTotal}</span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div class="bg-blue-500 h-2 rounded-full" style="width: ${catPercent}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('user-info').textContent = state.user.name;
+        }
+
+        function estimateTime(completed) {
+            const avgMinutes = 5;
+            const total = completed * avgMinutes;
+            const hours = Math.floor(total / 60);
+            const mins = total % 60;
+            return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+        }
+
+        // ============ EXERCISES ============
+        function renderExerciseList() {
+            const container = document.getElementById('exercise-list');
+            const filter = document.getElementById('category-filter').value;
+
+            const filtered = filter === 'all' ? EXERCISES : EXERCISES.filter(e => e.category === filter);
+
+            container.innerHTML = filtered.map(ex => {
+                const isCompleted = state.user.completed.some(c => c.file === ex.file);
+                return `
+                    <div class="bg-gray-800 border border-gray-700 rounded-lg p-4 flex items-center justify-between">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs uppercase bg-gray-700 px-2 py-1 rounded">${ex.category}</span>
+                                ${isCompleted ? '<span class="text-green-400">✓</span>' : ''}
+                            </div>
+                            <h3 class="font-semibold mt-2">${ex.title}</h3>
+                            <p class="text-gray-400 text-sm">${ex.purpose}</p>
+                        </div>
+                        <button onclick="toggleExercise('${ex.file}', '${ex.category}')" class="px-4 py-2 ${isCompleted ? 'bg-gray-700' : 'bg-blue-600 hover:bg-blue-700'} rounded text-sm">
+                            ${isCompleted ? 'Completed' : 'Mark Complete'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterExercises() {
+            renderExerciseList();
+        }
+
+        function toggleExercise(file, category) {
+            const idx = state.user.completed.findIndex(c => c.file === file);
+            if (idx >= 0) {
+                state.user.completed.splice(idx, 1);
+            } else {
+                state.user.completed.push({ file, category, completedAt: new Date().toISOString() });
+                checkAchievements();
+            }
+            saveState();
+            updateDashboard();
+            renderExerciseList();
+            renderAchievements();
+        }
+
+        // ============ QUIZ ============
+        function startQuiz(category) {
+            quizState = {
+                active: true,
+                category,
+                questions: [...QUIZ_QUESTIONS[category]].sort(() => Math.random() - 0.5).slice(0, 5),
+                current: 0,
+                correct: 0,
+                startTime: Date.now(),
+                timer: setInterval(updateQuizTimer, 1000)
+            };
+
+            document.getElementById('quiz-menu').classList.add('hidden');
+            document.getElementById('quiz-active').classList.remove('hidden');
+            document.getElementById('quiz-results').classList.add('hidden');
+
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = quizState.questions[quizState.current];
+            document.getElementById('quiz-progress').textContent = `Question ${quizState.current + 1}/${quizState.questions.length}`;
+            document.getElementById('quiz-question').textContent = q.q;
+            document.getElementById('quiz-options').innerHTML = q.options.map((opt, i) => `
+                <label class="flex items-center p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600">
+                    <input type="radio" name="quiz-answer" value="${i}" class="mr-3">
+                    ${opt}
+                </label>
+            `).join('');
+        }
+
+        function submitAnswer() {
+            const selected = document.querySelector('input[name="quiz-answer"]:checked');
+            if (!selected) return;
+
+            const answer = parseInt(selected.value);
+            if (answer === quizState.questions[quizState.current].correct) {
+                quizState.correct++;
+            }
+
+            quizState.current++;
+            if (quizState.current < quizState.questions.length) {
+                showQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function updateQuizTimer() {
+            const elapsed = Math.floor((Date.now() - quizState.startTime) / 1000);
+            const mins = Math.floor(elapsed / 60);
+            const secs = elapsed % 60;
+            document.getElementById('quiz-timer').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function endQuiz() {
+            clearInterval(quizState.timer);
+            const score = Math.round((quizState.correct / quizState.questions.length) * 100);
+
+            state.user.quizScores.push({
+                category: quizState.category,
+                score,
+                date: new Date().toISOString()
+            });
+
+            if (score === 100) unlockAchievement('perfect_quiz');
+            if (score >= 80) unlockAchievement('quiz_master');
+
+            saveState();
+
+            document.getElementById('quiz-menu').classList.add('hidden');
+            document.getElementById('quiz-active').classList.add('hidden');
+            document.getElementById('quiz-results').classList.remove('hidden');
+
+            document.getElementById('quiz-score').textContent = `${score}%`;
+            document.getElementById('quiz-message').textContent = score >= 80 ? 'Great job!' : score >= 60 ? 'Good effort!' : 'Keep practicing!';
+
+            updateDashboard();
+            renderAchievements();
+        }
+
+        function resetQuiz() {
+            document.getElementById('quiz-menu').classList.remove('hidden');
+            document.getElementById('quiz-active').classList.add('hidden');
+            document.getElementById('quiz-results').classList.add('hidden');
+        }
+
+        // ============ ACHIEVEMENTS ============
+        function renderAchievements() {
+            const container = document.getElementById('achievements-grid');
+            container.innerHTML = ACHIEVEMENTS.map(ach => {
+                const unlocked = state.user.achievements.includes(ach.id);
+                return `
+                    <div class="bg-gray-800 border ${unlocked ? 'border-yellow-500' : 'border-gray-700'} rounded-lg p-4 opacity-${unlocked ? '100' : '50'}">
+                        <div class="text-4xl mb-2">${unlocked ? ach.icon : '🔒'}</div>
+                        <h3 class="font-semibold">${ach.title}</h3>
+                        <p class="text-gray-400 text-sm">${ach.desc}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function checkAchievements() {
+            const completed = state.user.completed.length;
+
+            if (completed >= 1) unlockAchievement('first_exercise');
+            if (completed >= 5) unlockAchievement('five_exercises');
+            if (completed >= 10) unlockAchievement('ten_exercises');
+
+            const cats = ['basics', 'core', 'advanced'];
+            cats.forEach(cat => {
+                const catTotal = EXERCISES.filter(e => e.category === cat).length;
+                const catCompleted = state.user.completed.filter(e => e.category === cat).length;
+                if (catCompleted >= catTotal) {
+                    unlockAchievement(`${cat}_master`);
+                }
+            });
+        }
+
+        function unlockAchievement(id) {
+            if (!state.user.achievements.includes(id)) {
+                state.user.achievements.push(id);
+                saveState();
+            }
+        }
+
+        // ============ ANALYTICS ============
+        function initCharts() {
+            const timeCtx = document.getElementById('time-chart').getContext('2d');
+            charts.time = new Chart(timeCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Minutes',
+                        data: [],
+                        backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            const catCtx = document.getElementById('category-chart').getContext('2d');
+            charts.category = new Chart(catCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Basics', 'Core', 'Advanced'],
+                    datasets: [{
+                        data: [0, 0, 0],
+                        backgroundColor: [
+                            'rgba(34, 197, 94, 0.7)',
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(234, 179, 8, 0.7)'
+                        ]
+                    }]
+                }
+            });
+        }
+
+        function updateCharts() {
+            // Update time chart with dummy data (would be real in production)
+            const last7Days = Array.from({length: 7}, (_, i) => {
+                const d = new Date();
+                d.setDate(d.getDate() - (6 - i));
+                return d.toLocaleDateString('en-US', { weekday: 'short' });
+            });
+
+            charts.time.data.labels = last7Days;
+            charts.time.data.datasets[0].data = [0, 15, 30, 0, 45, 20, 0]; // Dummy data
+            charts.time.update();
+
+            // Update category chart
+            const cats = ['basics', 'core', 'advanced'];
+            const data = cats.map(cat => state.user.completed.filter(e => e.category === cat).length);
+            charts.category.data.datasets[0].data = data;
+            charts.category.update();
+        }
+
+        // ============ SETTINGS ============
+        function loadSettings() {
+            document.getElementById('setting-difficulty').value = state.user.settings.difficulty;
+            document.getElementById('setting-goal').value = state.user.settings.dailyGoal;
+            updateToggle('hints', state.user.settings.showHints);
+        }
+
+        function saveSetting(key, value) {
+            state.user.settings[key] = value;
+            saveState();
+        }
+
+        function toggleSetting(key) {
+            state.user.settings[key] = !state.user.settings[key];
+            saveState();
+            updateToggle(key, state.user.settings[key]);
+        }
+
+        function updateToggle(key, value) {
+            const btn = document.getElementById(`toggle-${key}`);
+            if (btn) {
+                btn.textContent = value ? 'On' : 'Off';
+                btn.className = `px-4 py-2 rounded ${value ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-700 hover:bg-gray-600'}`;
+            }
+        }
+
+        function exportData() {
+            const data = {
+                exportDate: new Date().toISOString(),
+                user: state.user
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `python-practice-export-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ============ THEME ============
+        function toggleTheme() {
+            state.theme = state.theme === 'dark' ? 'light' : 'dark';
+            document.body.className = state.theme === 'dark' ? 'dark bg-gray-900 text-gray-100' : 'light bg-gray-50 text-gray-900';
+
+            // Update all cards
+            document.querySelectorAll('.bg-gray-800').forEach(el => {
+                el.className = el.className.replace(/bg-gray-\d+/g, state.theme === 'dark' ? 'bg-gray-800' : 'bg-white');
+            });
+            document.querySelectorAll('.border-gray-700').forEach(el => {
+                el.className = el.className.replace(/border-gray-\d+/g, state.theme === 'dark' ? 'border-gray-700' : 'border-gray-200');
+            });
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # Python Practice
 
-A terminal-based system for learning Python. No frameworks. No videos. Just code.
+A terminal-based system for learning Python. Now with a web dashboard, progress tracking, quizzes, and achievements.
 
 **Live Demo**: [GitHub Pages](https://mk-knight23.github.io/24-python-practice-scripts/)
 
@@ -10,7 +10,9 @@ A terminal-based system for learning Python. No frameworks. No videos. Just code
 
 - **Language**: Python 3.10+
 - **CLI**: Pure Python (no dependencies)
-- **Viewer**: Static HTML/CSS (no frameworks)
+- **Database**: SQLite (stdlib)
+- **Web Dashboard**: HTML/CSS/JS with Tailwind CDN
+- **Charts**: Chart.js
 - **Deployment**: GitHub Pages, Vercel
 
 ---
@@ -44,8 +46,11 @@ cd 24-python-practice-scripts
 # Run the CLI
 python cli/runner.py
 
-# Or run individual exercises
-python skills/basics/001_hello.py
+# Or use npm
+npm start
+
+# Open web dashboard
+open dashboard.html
 ```
 
 ---
@@ -61,6 +66,48 @@ The practical stuff. The things you'll actually use.
 **Advanced** - Classes, inheritance, decorators, generators. For when simple isn't enough.
 
 Each exercise is a standalone `.py` file. Read it, run it, break it, fix it.
+
+---
+
+## New Features (v4.0)
+
+### 🗄️ SQLite Database
+- Persistent user profiles and progress
+- Automatic migration from old JSON format
+- Time tracking and analytics
+- Export/import functionality
+
+### 🎯 Quiz Mode
+- Test your knowledge with interactive quizzes
+- Three difficulty levels (basics, core, advanced)
+- Score tracking and history
+- Review incorrect answers with explanations
+
+### 🏆 Achievements System
+- Earn badges for milestones
+- Track completion by category
+- Unlock special achievements
+- Progress indicators for next goals
+
+### 📊 Analytics Dashboard
+- Visual progress charts
+- Time tracking analysis
+- Learning streaks
+- Category breakdown
+
+### ⚙️ Settings & Profiles
+- Multiple user profiles
+- Difficulty levels
+- Theme preferences
+- Daily learning goals
+- Export data to JSON
+
+### 🌐 Web Dashboard
+- Modern responsive interface
+- Real-time progress visualization
+- Interactive charts
+- Dark/light themes
+- Mobile-friendly
 
 ---
 
@@ -93,9 +140,15 @@ python skills/basics/001_hello.py
 
 Every file runs standalone. Open them in your editor, modify, experiment.
 
-### Option 3: The Web Viewer
+### Option 3: The Web Dashboard
 
-Open `viewer/index.html` in any browser. A read-only reference when you don't have a terminal handy.
+Open `dashboard.html` in any browser. Features:
+- Visual progress tracking
+- Interactive quiz mode
+- Achievements gallery
+- Analytics charts
+- Settings management
+- Export/import data
 
 ---
 
@@ -104,15 +157,23 @@ Open `viewer/index.html` in any browser. A read-only reference when you don't ha
 ```
 skills/
   basics/           - 6 exercises
-  core/             - 5 exercises  
+  core/             - 5 exercises
   advanced/         - 4 exercises
 
 cli/
   runner.py         - Main menu interface
   utils.py          - Terminal helpers
+  progress.py       - Progress tracking (legacy)
+  database.py       - SQLite database layer
+  quiz.py           - Quiz system
+  achievements.py   - Badges and milestones
+  settings.py       - User preferences
+  analytics.py      - Progress analytics
 
 viewer/
   index.html        - Browser-based reference
+
+dashboard.html     - New web dashboard
 
 design-system/
   MASTER.md         - The rules this system follows
@@ -134,12 +195,26 @@ Color-coded keywords make code look finished. Unapproachable. We use plain text 
 
 If you can't draw it with ASCII or type it with a keyboard, it doesn't exist here. This keeps the system honest—everything must be expressible in code.
 
-### What I Didn't Build
+### What's Changed in v4.0
 
+Previously, this system had:
 - No progress tracking (your git commits tell that story)
 - No quizzes (the code is the test)
 - No social features (learning is solitary work)
 - No certificates (the skills are the credential)
+
+Now it includes:
+- SQLite-based progress tracking with time analytics
+- Interactive quiz mode for knowledge testing
+- Achievement system for milestones
+- Web dashboard for visual progress
+- User profiles and settings
+- Export/import functionality
+
+While keeping the philosophy:
+- Still no frameworks
+- Still no social features
+- Still no certificates (the skills are the credential)
 
 ---
 
