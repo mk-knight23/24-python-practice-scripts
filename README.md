@@ -19,9 +19,11 @@ A terminal-based system for learning Python. Now with a web dashboard, progress 
 
 ## Live Links
 
-- **GitHub Pages**: https://mk-knight23.github.io/24-python-practice-scripts/
-- **Vercel**: https://24-python-practice-scripts.vercel.app
-- **Netlify**: N/A (static HTML viewer only)
+- **GitHub**: https://github.com/mk-knight23/24-python-practice-scripts
+- **Vercel**: https://57-starter-python-practice.vercel.app ✅
+
+### Deployment Platforms
+- ✅ Vercel (configured: prj_TBxkbImMi5QZuSOkXrHSiYaox6P3)
 
 ---
 
