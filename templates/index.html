@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Practice - Web Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        code { font-family: 'JetBrains Mono', monospace; }
+        .skill-card:hover { transform: translateY(-2px); }
+        .skill-card { transition: all 0.3s ease; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <h1 class="text-2xl font-bold text-gray-900">Python Practice Dashboard</h1>
+            <p class="text-sm text-gray-600 mt-1">Track your progress and explore exercises</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <!-- User Input Section -->
+        <div class="mb-8">
+            <input type="text" id="username" placeholder="Enter your username"
+                   class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button onclick="loadProgress()"
+                    class="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Load Progress
+            </button>
+        </div>
+
+        <!-- Progress Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold mb-2">Total Exercises</h3>
+                <p class="text-3xl font-bold text-blue-600" id="totalExercises">15</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold mb-2">Completed</h3>
+                <p class="text-3xl font-bold text-green-600" id="completedExercises">0</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-semibold mb-2">Progress</h3>
+                <p class="text-3xl font-bold text-purple-600" id="progressPercent">0%</p>
+            </div>
+        </div>
+
+        <!-- Skills Sections -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Basics Section -->
+            <div>
+                <h2 class="text-xl font-bold mb-4 text-gray-800">Basics</h2>
+                <div id="basics" class="space-y-4">
+                    <!-- Skills will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Core Section -->
+            <div>
+                <h2 class="text-xl font-bold mb-4 text-gray-800">Core</h2>
+                <div id="core" class="space-y-4">
+                    <!-- Skills will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Advanced Section -->
+            <div>
+                <h2 class="text-xl font-bold mb-4 text-gray-800">Advanced</h2>
+                <div id="advanced" class="space-y-4">
+                    <!-- Skills will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Chart -->
+        <div class="mt-8 bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-bold mb-4">Progress Over Time</h2>
+            <canvas id="progressChart" width="400" height="200"></canvas>
+        </div>
+    </main>
+
+    <script>
+        let currentUsername = '';
+        let progressChart = null;
+
+        // Load skills from API
+        async function loadSkills() {
+            try {
+                const response = await fetch('/api/skills');
+                const skills = await response.json();
+
+                // Render skills
+                Object.keys(skills).forEach(category => {
+                    const container = document.getElementById(category);
+                    container.innerHTML = '';
+
+                    skills[category].forEach(skill => {
+                        const skillCard = document.createElement('div');
+                        skillCard.className = 'skill-card bg-white p-4 rounded-lg shadow cursor-pointer hover:shadow-md';
+                        skillCard.innerHTML = `
+                            <h3 class="font-semibold text-gray-800">${skill.name}</h3>
+                            <p class="text-sm text-gray-600 mt-1">Click to view exercise</p>
+                        `;
+                        skillCard.onclick = () => showExercise(skill);
+                        container.appendChild(skillCard);
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading skills:', error);
+            }
+        }
+
+        // Load user progress
+        async function loadProgress() {
+            const username = document.getElementById('username').value;
+            if (!username) return;
+
+            currentUsername = username;
+            try {
+                const response = await fetch(`/api/progress/${username}`);
+                const progress = await response.json();
+
+                // Update progress display
+                document.getElementById('completedExercises').textContent = progress.completed_exercises;
+                const percent = Math.round((progress.completed_exercises / progress.total_exercises) * 100);
+                document.getElementById('progressPercent').textContent = `${percent}%`;
+
+                // Update progress chart
+                updateProgressChart(progress.completions);
+            } catch (error) {
+                console.error('Error loading progress:', error);
+            }
+        }
+
+        // Show exercise in modal
+        function showExercise(skill) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+                    <div class="p-6 border-b">
+                        <h2 class="text-2xl font-bold">${skill.name}</h2>
+                        <p class="text-gray-600">${skill.category}</p>
+                    </div>
+                    <div class="p-6 overflow-y-auto">
+                        <pre class="bg-gray-100 p-4 rounded-lg"><code>${skill.content}</code></pre>
+                    </div>
+                    <div class="p-6 border-t flex justify-end space-x-4">
+                        <button onclick="markComplete('${skill.id}')"
+                                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                            Mark as Complete
+                        </button>
+                        <button onclick="this.closest('.fixed').remove()"
+                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Mark exercise as complete
+        async function markComplete(exerciseId) {
+            if (!currentUsername) {
+                alert('Please enter your username first');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: currentUsername,
+                        exercise_id: exerciseId,
+                        score: 100
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Exercise marked as complete!');
+                    loadProgress(); // Refresh progress
+                    // Remove modal
+                    document.querySelector('.fixed').remove();
+                }
+            } catch (error) {
+                console.error('Error marking complete:', error);
+            }
+        }
+
+        // Update progress chart
+        function updateProgressChart(completions) {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+
+            if (progressChart) {
+                progressChart.destroy();
+            }
+
+            const labels = completions.map(c => new Date(c.completed_at).toLocaleDateString());
+            const data = completions.map((_, i) => i + 1);
+
+            progressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Completed Exercises',
+                        data: data,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSkills();
+        });
+    </script>
+</body>
+</html>
