@@ -1,24 +1,7 @@
 {
-  "builds": [
-    {
-      "src": "app.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/app.py"
-    }
-  ],
-  "env": {
-    "PYTHON_VERSION": "3.10"
-  },
-  "github": {
-    "silent": true
-  }
+  "buildCommand": "echo 'Static files ready'",
+  "outputDirectory": ".",
+  "installCommand": "echo 'No build needed'",
+  "framework": null,
+  "regions": ["iad1"]
 }
