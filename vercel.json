@@ -1,7 +1,20 @@
 {
-  "buildCommand": "echo 'Static files ready'",
-  "outputDirectory": ".",
-  "installCommand": "echo 'No build needed'",
-  "framework": null,
-  "regions": ["iad1"]
+  "version": 2,
+  "name": "learn-python-practice",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "github": {
+    "enabled": true,
+    "autoAlias": true
+  }
 }
