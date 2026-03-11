@@ -3,6 +3,7 @@
   "version": "4.0.0",
   "description": "A terminal-based Python learning system with web dashboard and analytics.",
   "scripts": {
+    "production": "npm run build && npm start",
     "start": "python cli/runner.py",
     "cli": "python cli/runner.py",
     "build": "echo 'Build complete - Static files ready'",
